@@ -6,8 +6,28 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		BC89AB722E9CDC0100208497 /* RickAndMortyAPI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC89AB712E9CDC0100208497 /* RickAndMortyAPI.framework */; };
+		BC89AB732E9CDC0100208497 /* RickAndMortyAPI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BC89AB712E9CDC0100208497 /* RickAndMortyAPI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		BC89AB742E9CDC0100208497 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				BC89AB732E9CDC0100208497 /* RickAndMortyAPI.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		BC89AB3F2E9CCA4C00208497 /* RickAndMortyStudyCase.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RickAndMortyStudyCase.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC89AB712E9CDC0100208497 /* RickAndMortyAPI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RickAndMortyAPI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -23,6 +43,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC89AB722E9CDC0100208497 /* RickAndMortyAPI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -33,6 +54,7 @@
 			isa = PBXGroup;
 			children = (
 				BC89AB412E9CCA4C00208497 /* RickAndMortyStudyCase */,
+				BC89AB702E9CDC0100208497 /* Frameworks */,
 				BC89AB402E9CCA4C00208497 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -45,6 +67,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		BC89AB702E9CDC0100208497 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				BC89AB712E9CDC0100208497 /* RickAndMortyAPI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -55,6 +85,7 @@
 				BC89AB3B2E9CCA4C00208497 /* Sources */,
 				BC89AB3C2E9CCA4C00208497 /* Frameworks */,
 				BC89AB3D2E9CCA4C00208497 /* Resources */,
+				BC89AB742E9CDC0100208497 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

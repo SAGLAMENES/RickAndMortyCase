@@ -33,13 +33,37 @@ public struct RequestBuilder {
         guard var comps = URLComponents(url: baseURL.appendingPathComponent(endpoint.path), resolvingAgainstBaseURL: false) else {
             throw APIError.invalidURL
         }
-        if !endpoint.queryItems.isEmpty { comps.queryItems = endpoint.queryItems }
-        guard let url = comps.url else { throw APIError.invalidURL }
+        if !endpoint.queryItems.isEmpty {
+            comps.queryItems = endpoint.queryItems
+        }
+        guard let url = comps.url else {
+            throw APIError.invalidURL
+        }
 
         var req = URLRequest(url: url)
         req.httpMethod = endpoint.method.rawValue
         defaultHeaders.forEach { req.setValue($1, forHTTPHeaderField: $0) }
         req.cachePolicy = .returnCacheDataElseLoad
         return req
+    }
+}
+
+public extension Endpoint {
+    static func charactersList(
+        page: Int? = nil,
+        name: String? = nil,
+        status: Status? = nil,
+        gender: Gender? = nil
+    ) -> Endpoint {
+        var items: [URLQueryItem] = []
+        if let page { items.append(.init(name: "page", value: String(page))) }
+        if let name, !name.isEmpty { items.append(.init(name: "name", value: name)) }
+        if let status { items.append(.init(name: "status", value: status.rawValue.lowercased())) }
+        if let gender { items.append(.init(name: "gender", value: gender.rawValue.lowercased())) }
+        return Endpoint(path: "character", queryItems: items)
+    }
+
+    static func character(id: Int) -> Endpoint {
+        Endpoint(path: "character/\(id)")
     }
 }

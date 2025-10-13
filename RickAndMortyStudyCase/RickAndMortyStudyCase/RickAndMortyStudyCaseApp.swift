@@ -13,7 +13,7 @@ struct RickAndMortyStudyCaseApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            CharactersView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
