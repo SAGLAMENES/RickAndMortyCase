@@ -6,143 +6,117 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		BC89AB722E9CDC0100208497 /* RickAndMortyAPI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC89AB712E9CDC0100208497 /* RickAndMortyAPI.framework */; };
-		BC89AB732E9CDC0100208497 /* RickAndMortyAPI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BC89AB712E9CDC0100208497 /* RickAndMortyAPI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		BC89AB9C2E9D0B5B00208497 /* RickAndMortyPersistence.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC89AB9B2E9D0B5B00208497 /* RickAndMortyPersistence.framework */; };
-		BC89AB9D2E9D0B5B00208497 /* RickAndMortyPersistence.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BC89AB9B2E9D0B5B00208497 /* RickAndMortyPersistence.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-/* End PBXBuildFile section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		BC89AB742E9CDC0100208497 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				BC89AB732E9CDC0100208497 /* RickAndMortyAPI.framework in Embed Frameworks */,
-				BC89AB9D2E9D0B5B00208497 /* RickAndMortyPersistence.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
-		BC89AB3F2E9CCA4C00208497 /* RickAndMortyStudyCase.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RickAndMortyStudyCase.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		BC89AB712E9CDC0100208497 /* RickAndMortyAPI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RickAndMortyAPI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		BC89AB9B2E9D0B5B00208497 /* RickAndMortyPersistence.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RickAndMortyPersistence.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC89AB912E9D0B4B00208497 /* RickAndMortyPersistence.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RickAndMortyPersistence.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		BC89AB412E9CCA4C00208497 /* RickAndMortyStudyCase */ = {
+		BC89AB932E9D0B4B00208497 /* RickAndMortyPersistence */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = RickAndMortyStudyCase;
+			path = RickAndMortyPersistence;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		BC89AB3C2E9CCA4C00208497 /* Frameworks */ = {
+		BC89AB8E2E9D0B4B00208497 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC89AB722E9CDC0100208497 /* RickAndMortyAPI.framework in Frameworks */,
-				BC89AB9C2E9D0B5B00208497 /* RickAndMortyPersistence.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		BC89AB362E9CCA4C00208497 = {
+		BC89AB872E9D0B4B00208497 = {
 			isa = PBXGroup;
 			children = (
-				BC89AB412E9CCA4C00208497 /* RickAndMortyStudyCase */,
-				BC89AB702E9CDC0100208497 /* Frameworks */,
-				BC89AB402E9CCA4C00208497 /* Products */,
+				BC89AB932E9D0B4B00208497 /* RickAndMortyPersistence */,
+				BC89AB922E9D0B4B00208497 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		BC89AB402E9CCA4C00208497 /* Products */ = {
+		BC89AB922E9D0B4B00208497 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BC89AB3F2E9CCA4C00208497 /* RickAndMortyStudyCase.app */,
+				BC89AB912E9D0B4B00208497 /* RickAndMortyPersistence.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		BC89AB702E9CDC0100208497 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				BC89AB9B2E9D0B5B00208497 /* RickAndMortyPersistence.framework */,
-				BC89AB712E9CDC0100208497 /* RickAndMortyAPI.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		BC89AB8C2E9D0B4B00208497 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
-		BC89AB3E2E9CCA4C00208497 /* RickAndMortyStudyCase */ = {
+		BC89AB902E9D0B4B00208497 /* RickAndMortyPersistence */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BC89AB4F2E9CCA4C00208497 /* Build configuration list for PBXNativeTarget "RickAndMortyStudyCase" */;
+			buildConfigurationList = BC89AB982E9D0B4B00208497 /* Build configuration list for PBXNativeTarget "RickAndMortyPersistence" */;
 			buildPhases = (
-				BC89AB3B2E9CCA4C00208497 /* Sources */,
-				BC89AB3C2E9CCA4C00208497 /* Frameworks */,
-				BC89AB3D2E9CCA4C00208497 /* Resources */,
-				BC89AB742E9CDC0100208497 /* Embed Frameworks */,
+				BC89AB8C2E9D0B4B00208497 /* Headers */,
+				BC89AB8D2E9D0B4B00208497 /* Sources */,
+				BC89AB8E2E9D0B4B00208497 /* Frameworks */,
+				BC89AB8F2E9D0B4B00208497 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				BC89AB412E9CCA4C00208497 /* RickAndMortyStudyCase */,
+				BC89AB932E9D0B4B00208497 /* RickAndMortyPersistence */,
 			);
-			name = RickAndMortyStudyCase;
+			name = RickAndMortyPersistence;
 			packageProductDependencies = (
 			);
-			productName = RickAndMortyStudyCase;
-			productReference = BC89AB3F2E9CCA4C00208497 /* RickAndMortyStudyCase.app */;
-			productType = "com.apple.product-type.application";
+			productName = RickAndMortyPersistence;
+			productReference = BC89AB912E9D0B4B00208497 /* RickAndMortyPersistence.framework */;
+			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		BC89AB372E9CCA4C00208497 /* Project object */ = {
+		BC89AB882E9D0B4B00208497 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1640;
 				LastUpgradeCheck = 1640;
 				TargetAttributes = {
-					BC89AB3E2E9CCA4C00208497 = {
+					BC89AB902E9D0B4B00208497 = {
 						CreatedOnToolsVersion = 16.4;
 					};
 				};
 			};
-			buildConfigurationList = BC89AB3A2E9CCA4C00208497 /* Build configuration list for PBXProject "RickAndMortyStudyCase" */;
+			buildConfigurationList = BC89AB8B2E9D0B4B00208497 /* Build configuration list for PBXProject "RickAndMortyPersistence" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = BC89AB362E9CCA4C00208497;
+			mainGroup = BC89AB872E9D0B4B00208497;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = BC89AB402E9CCA4C00208497 /* Products */;
+			productRefGroup = BC89AB922E9D0B4B00208497 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				BC89AB3E2E9CCA4C00208497 /* RickAndMortyStudyCase */,
+				BC89AB902E9D0B4B00208497 /* RickAndMortyPersistence */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		BC89AB3D2E9CCA4C00208497 /* Resources */ = {
+		BC89AB8F2E9D0B4B00208497 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -152,7 +126,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		BC89AB3B2E9CCA4C00208497 /* Sources */ = {
+		BC89AB8D2E9D0B4B00208497 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -162,7 +136,7 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		BC89AB4D2E9CCA4C00208497 /* Debug */ = {
+		BC89AB962E9D0B4B00208497 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -196,6 +170,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = M7A4KHAH27;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -223,10 +198,12 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
 			};
 			name = Debug;
 		};
-		BC89AB4E2E9CCA4C00208497 /* Release */ = {
+		BC89AB972E9D0B4B00208497 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -260,6 +237,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = M7A4KHAH27;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -280,60 +258,72 @@
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
 		};
-		BC89AB502E9CCA4C00208497 /* Debug */ = {
+		BC89AB992E9D0B4B00208497 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = M7A4KHAH27;
-				ENABLE_PREVIEWS = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.enessaglam.RickAndMortyStudyCase;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.enessaglam.RickAndMortyPersistence;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_MODULE = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
-		BC89AB512E9CCA4C00208497 /* Release */ = {
+		BC89AB9A2E9D0B4B00208497 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = M7A4KHAH27;
-				ENABLE_PREVIEWS = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.enessaglam.RickAndMortyStudyCase;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.enessaglam.RickAndMortyPersistence;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_MODULE = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -342,25 +332,25 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		BC89AB3A2E9CCA4C00208497 /* Build configuration list for PBXProject "RickAndMortyStudyCase" */ = {
+		BC89AB8B2E9D0B4B00208497 /* Build configuration list for PBXProject "RickAndMortyPersistence" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				BC89AB4D2E9CCA4C00208497 /* Debug */,
-				BC89AB4E2E9CCA4C00208497 /* Release */,
+				BC89AB962E9D0B4B00208497 /* Debug */,
+				BC89AB972E9D0B4B00208497 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		BC89AB4F2E9CCA4C00208497 /* Build configuration list for PBXNativeTarget "RickAndMortyStudyCase" */ = {
+		BC89AB982E9D0B4B00208497 /* Build configuration list for PBXNativeTarget "RickAndMortyPersistence" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				BC89AB502E9CCA4C00208497 /* Debug */,
-				BC89AB512E9CCA4C00208497 /* Release */,
+				BC89AB992E9D0B4B00208497 /* Debug */,
+				BC89AB9A2E9D0B4B00208497 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = BC89AB372E9CCA4C00208497 /* Project object */;
+	rootObject = BC89AB882E9D0B4B00208497 /* Project object */;
 }

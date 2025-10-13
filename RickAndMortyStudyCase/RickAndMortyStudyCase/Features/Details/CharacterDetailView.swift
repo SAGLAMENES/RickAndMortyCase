@@ -7,65 +7,58 @@
 
 import SwiftUI
 
+// App target
+import SwiftUI
+
 struct CharacterDetailView: View {
-    let character: Character
-    @State private var isFavorite: Bool
+    @StateObject private var vm: CharacterDetailViewModel
 
     init(character: Character) {
-        self.character = character
-        _isFavorite = State(initialValue: character.isFavorite)
+        _vm = StateObject(wrappedValue: CharacterDetailViewModel(character: character))
     }
 
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
-                AsyncImage(url: character.imageURL) { phase in
+                AsyncImage(url: vm.character.imageURL) { phase in
                     switch phase {
                     case .empty: ProgressView().frame(height: 260)
                     case .success(let img):
-                        img.resizable().scaledToFit()
+                        img.resizable().scaledToFill()
                             .frame(height: 260).clipped()
                             .clipShape(RoundedRectangle(cornerRadius: 16))
                     case .failure:
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(Color.gray.opacity(0.15))
-                            Image(systemName: "person.fill")
-                                .font(.system(size: 50))
-                                .foregroundStyle(.secondary)
-                        }
-                        .frame(height: 260)
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(Color.gray.opacity(0.2))
+                            .frame(height: 260)
                     @unknown default:
                         Color.gray.opacity(0.1).frame(height: 260)
                     }
                 }
 
+                Text(vm.character.name)
+                    .font(.title).bold()
+                    .multilineTextAlignment(.center)
+
+                StatusRectangle(status: vm.character.status)
+
                 VStack(spacing: 8) {
-                    Text(character.name)
-                        .font(.title).fontWeight(.bold)
-                        .multilineTextAlignment(.center)
-
-                    StatusRectangle(status: character.status)
-                }
-
-                VStack(spacing: 12) {
-                    InfoRow(title: "Species", value: character.species)
-                    InfoRow(title: "Gender",  value: character.gender.label)
-                    InfoRow(title: "Location", value: character.locationName)
+                    InfoRow(title: "Species", value: vm.character.species)
+                    InfoRow(title: "Gender",  value: vm.character.gender.label)
+                    InfoRow(title: "Location", value: vm.character.locationName)
                 }
                 .padding()
                 .background(.ultraThickMaterial, in: RoundedRectangle(cornerRadius: 16))
             }
             .padding()
         }
-        .navigationTitle(character.name)
+        .navigationTitle(vm.character.name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             Button {
-                isFavorite.toggle()
-                // TODO: CoreDAta geleck
+                vm.toggleFavorite()
             } label: {
-                Image(systemName: isFavorite ? "heart.fill" : "heart")
+                Image(systemName: vm.isFavorite ? "heart.fill" : "heart")
             }
         }
     }
@@ -85,7 +78,7 @@ private struct InfoRow: View {
 
 private struct StatusRectangle: View {
     let status: CharacterStatus
-
+    
     var body: some View {
         Label {
             Text(status.label)

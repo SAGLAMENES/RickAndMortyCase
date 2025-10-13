@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:RickAndMortyPersistence/RickAndMortyPersistence.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:RickAndMortyAPI/RickAndMortyAPI.xcodeproj">
    </FileRef>
    <FileRef

@@ -14,6 +14,7 @@ final class CharacterListViewModel: ObservableObject {
     enum State { case idle, loading, loaded([CharacterDTO]), failed(String) }
 
     @Published private(set) var state: State = .idle
+    @Published private(set) var favoriteIDs: Set<Int> = []
 
     private let api: RickAndMortyAPIProtocol
     private var lastInfo: CharactersPage.Info?
@@ -47,13 +48,10 @@ final class CharacterListViewModel: ObservableObject {
             do {
                 let next = try await api.listCharacters(page: nextPage, name: nil, status: nil, gender: nil)
                 lastInfo = next.info
-                switch state {
-                case .loaded(let old):
+                if case .loaded(let old) = state {
                     state = .loaded(old + next.results)
-                case .idle, .loading:
+                } else {
                     state = .loaded(next.results)
-                case .failed:
-                    break
                 }
             } catch {
                 state = .failed(error.localizedDescription)
@@ -65,12 +63,11 @@ final class CharacterListViewModel: ObservableObject {
         guard let next = info?.next,
               let comps = URLComponents(string: next),
               let val = comps.queryItems?.first(where: { $0.name == "page" })?.value,
-              let page = Int(val)
-        else { return nil }
+              let page = Int(val) else { return nil }
         return page
     }
 }
-import RickAndMortyAPI
+
 
 extension CharacterDTO {
     func toDomain() -> Character {
@@ -85,6 +82,7 @@ extension CharacterDTO {
         )
     }
 }
+
 
 private extension CharacterStatus {
     init(dto: Status) {
@@ -105,3 +103,4 @@ private extension CharacterGender {
         }
     }
 }
+
