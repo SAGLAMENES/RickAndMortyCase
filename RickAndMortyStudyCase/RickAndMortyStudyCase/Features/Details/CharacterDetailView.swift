@@ -24,8 +24,10 @@ struct CharacterDetailView: View {
                     switch phase {
                     case .empty: ProgressView().frame(height: 260)
                     case .success(let img):
-                        img.resizable().scaledToFill()
-                            .frame(height: 260).clipped()
+                        img.resizable()
+                            .scaledToFit()
+                            .frame(height: 260)
+                            .clipped()
                             .clipShape(RoundedRectangle(cornerRadius: 16))
                     case .failure:
                         RoundedRectangle(cornerRadius: 16)

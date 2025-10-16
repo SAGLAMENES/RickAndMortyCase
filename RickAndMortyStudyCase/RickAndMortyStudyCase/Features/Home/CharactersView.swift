@@ -11,11 +11,24 @@ import RickAndMortyAPI
 struct CharactersView: View {
     @StateObject private var vm = CharacterListViewModel(api: RickAndMortyAPIClient())
     
+    @State private var searchText = ""
+    
     var body: some View {
         NavigationStack {
+            
             content
                 .navigationTitle("Rick & Morty Characters")
                 .navigationBarTitleDisplayMode(.inline)
+                .searchable(text: $searchText, prompt: "Search characters")
+                .onChange(of: searchText) { oldVal, newValue in
+                    vm.searchCharacters(name: newValue)
+                }
+                .onSubmit(of: .search) {
+                    vm.searchCharacters(name: searchText)
+                }
+                .task {
+                    if case .idle = vm.state { vm.loadFirstPage() }
+                }
         }
         .task {
             vm.loadFirstPage()
@@ -46,7 +59,7 @@ struct CharactersView: View {
                             AsyncImage(url: url) { phase in
                                 switch phase {
                                 case .empty: ProgressView()
-                                case .success(let img): img.resizable().scaledToFill()
+                                case .success(let img): img.resizable().scaledToFit()
                                 case .failure: Color.gray.opacity(0.2)
                                 @unknown default: Color.gray.opacity(0.2)
                                 }
@@ -62,7 +75,7 @@ struct CharactersView: View {
                         }
                         Spacer()
                     }
-                   
+                    
                 }
                 .onAppear {
                     if  index >= items.count - 5 {
