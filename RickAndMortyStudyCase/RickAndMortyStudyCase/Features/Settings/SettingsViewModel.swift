@@ -7,7 +7,7 @@
 
  
 import SwiftUI
-//import firebase
+//import Firebase
 protocol SettingsViewModelProtocol: ObservableObject {
     var isDarkMode: Bool { get set }
     var selectedLanguage: String { get set }

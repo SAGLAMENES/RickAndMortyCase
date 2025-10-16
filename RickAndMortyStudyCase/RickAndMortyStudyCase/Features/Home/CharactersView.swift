@@ -10,7 +10,7 @@ import RickAndMortyAPI
 
 struct CharactersView: View {
     @StateObject private var vm = CharacterListViewModel(api: RickAndMortyAPIClient())
-    
+
     @State private var searchText = ""
     
     var body: some View {
@@ -68,7 +68,9 @@ struct CharactersView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 8))
                         }
                         VStack(alignment: .leading) {
-                            Text(ch.name).font(.headline)
+                            Text(ch.name)
+                                .font(.headline)
+                            
                             Text("\(ch.status.rawValue) • \(ch.gender.rawValue)")
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
