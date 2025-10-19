@@ -7,9 +7,6 @@
 
 import SwiftUI
 
-// App target
-import SwiftUI
-
 struct CharacterDetailView: View {
     @StateObject private var vm: CharacterDetailViewModel
 
@@ -19,7 +16,7 @@ struct CharacterDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 16) {
+            LazyVStack(spacing: 16) {
                 AsyncImage(url: vm.character.imageURL) { phase in
                     switch phase {
                     case .empty: ProgressView().frame(height: 260)
@@ -39,8 +36,7 @@ struct CharacterDetailView: View {
                 }
 
                 Text(vm.character.name)
-                    .font(.title).bold()
-                    .multilineTextAlignment(.center)
+                    .titleStyle()
 
                 StatusRectangle(status: vm.character.status)
 
@@ -71,9 +67,12 @@ private struct InfoRow: View {
     let value: String
     var body: some View {
         HStack {
-            Text(title).fontWeight(.semibold)
+            Text(title)
+                .captionStyle()
             Spacer()
-            Text(value).foregroundStyle(.secondary)
+            Text(value)
+                .captionStyle()
+
         }
     }
 }
@@ -84,7 +83,7 @@ private struct StatusRectangle: View {
     var body: some View {
         Label {
             Text(status.label)
-                .font(.subheadline).fontWeight(.semibold)
+                .bodyStyle()
         } icon: {
             Image(systemName: status.symbolName)
                 .imageScale(.small)

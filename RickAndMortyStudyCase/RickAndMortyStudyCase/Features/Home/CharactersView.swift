@@ -1,95 +1,143 @@
-//
-//  ContentView.swift
-//  RickAndMortyStudyCase
-//
-//  Created by Enes on 13.10.2025.
-//
-
 import SwiftUI
 import RickAndMortyAPI
 
 struct CharactersView: View {
     @StateObject private var vm = CharacterListViewModel(api: RickAndMortyAPIClient())
-
     @State private var searchText = ""
-    
+
     var body: some View {
         NavigationStack {
-            
             content
                 .navigationTitle("Rick & Morty Characters")
                 .navigationBarTitleDisplayMode(.inline)
                 .searchable(text: $searchText, prompt: "Search characters")
-                .onChange(of: searchText) { oldVal, newValue in
+                .onChange(of: searchText) { oldValue, newValue in
                     vm.searchCharacters(name: newValue)
                 }
                 .onSubmit(of: .search) {
                     vm.searchCharacters(name: searchText)
                 }
-                .task {
-                    if case .idle = vm.state { vm.loadFirstPage() }
-                }
         }
+        .tint(RMColor.semantic.tint)
+        .toolbarBackground(RMColor.semantic.background, for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
         .task {
-            vm.loadFirstPage()
+            if case .idle = vm.state { vm.loadFirstPage() }
         }
+        .background(RMColor.semantic.background)
     }
-    
+
     @ViewBuilder
     private var content: some View {
         switch vm.state {
         case .idle, .loading:
-            ProgressView("Yükleniyor..")
+            ProgressView("Yükleniyor…")
+                .progressViewStyle(.circular)
+                .tint(RMColor.semantic.accent)
+                .foregroundStyle(RMColor.semantic.textSecondary)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(RMColor.semantic.background)
+
         case .failed(let msg):
             VStack(spacing: 12) {
                 Text("Hata: \(msg)")
                     .multilineTextAlignment(.center)
-                Button("Tekrar Dene") {
-                    vm.loadFirstPage()
-                }
+                    .foregroundStyle(RMColor.semantic.textPrimary)
+
+                Button("Tekrar Dene") { vm.loadFirstPage() }
+                    .buttonStyle(.borderedProminent)
+                    .tint(RMColor.semantic.tint)
             }
             .padding()
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(RMColor.semantic.background)
+
         case .loaded(let items):
-            List(Array(items.enumerated()), id: \.element.id) { index, ch in
-                HStack(spacing: 12) {
-                    NavigationLink(destination: CharacterDetailView(character: ch.toDomain())) {
-                        if let url = URL(string: ch.image) {
-                            AsyncImage(url: url) { phase in
-                                switch phase {
-                                case .empty: ProgressView()
-                                case .success(let img): img.resizable().scaledToFit()
-                                case .failure: Color.gray.opacity(0.2)
-                                @unknown default: Color.gray.opacity(0.2)
-                                }
-                            }
-                            .frame(width: 44, height: 44)
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                        }
-                        VStack(alignment: .leading) {
-                            Text(ch.name)
-                                .font(.headline)
-                            
-                            Text("\(ch.status.rawValue) • \(ch.gender.rawValue)")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                        }
-                        Spacer()
-                    }
-                    
+            characterList(items)
+        }
+    }
+
+    private func characterList(_ items: [CharacterDTO]) -> some View {
+        List {
+            ForEach(Array(items.enumerated()), id: \.element.id) { index, ch in
+                NavigationLink {
+                    CharacterDetailView(character: ch.toDomain())
+                } label: {
+                    CharacterRowCard(ch: ch)
                 }
+                .listRowBackground(RMColor.semantic.surface)
                 .onAppear {
-                    if  index >= items.count - 5 {
+                    if index >= items.count - 5 {
                         vm.loadNextPageIfAvailable()
                     }
                 }
             }
+        }
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
+        .background(RMColor.semantic.background)
+    }
+}
+
+private struct CharacterRowCard: View {
+    let ch: CharacterDTO
+
+    var body: some View {
+        HStack(spacing: 12) {
+            avatar
+            VStack(alignment: .leading, spacing: 2) {
+                Text(ch.name)
+                    .bodyStyle()
+                    .foregroundStyle(RMColor.semantic.textPrimary)
+                Text("\(ch.status.rawValue) • \(ch.gender.rawValue)")
+                    .captionStyle()
+                    .foregroundStyle(RMColor.semantic.textSecondary)
+            }
+            Spacer()
+        }
+        .padding(10)
+        .background(RMColor.semantic.surface)
+        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .stroke(Color.white.opacity(0.08), lineWidth: 1)
+        )
+    }
+
+    @ViewBuilder
+    private var avatar: some View {
+        if let url = URL(string: ch.image) {
+            AsyncImage(url: url) { phase in
+                switch phase {
+                case .empty:
+                    ZStack {
+                        RMColor.semantic.surface
+                        ProgressView().tint(RMColor.semantic.accent)
+                    }
+                case .success(let img):
+                    img.resizable().scaledToFit()
+                        .frame(width: 75,height: 125)
+                    
+                case .failure:
+                    Image(systemName: "photo")
+                        .imageScale(.large)
+                        .foregroundStyle(RMColor.semantic.textSecondary)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                @unknown default:
+                    Color.gray.opacity(0.2)
+                }
+            }
+            .frame(width: 56, height: 56)
+            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(Color.white.opacity(0.08), lineWidth: 1)
+            )
         }
     }
 }
 
 #Preview {
     CharactersView()
+        .preferredColorScheme(.dark)
 }
-

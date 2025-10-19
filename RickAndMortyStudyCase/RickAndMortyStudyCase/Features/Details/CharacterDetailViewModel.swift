@@ -8,6 +8,11 @@
 import Foundation
 import RickAndMortyPersistence
 
+protocol CharacterDetailViewProtocol{
+    func toggleFavorite()
+    
+}
+
 @MainActor
 final class CharacterDetailViewModel: ObservableObject {
     @Published private(set) var character: Character
@@ -38,6 +43,7 @@ final class CharacterDetailViewModel: ObservableObject {
         }
     }
 }
+
 extension Character {
     var asLocal: CharacterLocal {
         CharacterLocal(

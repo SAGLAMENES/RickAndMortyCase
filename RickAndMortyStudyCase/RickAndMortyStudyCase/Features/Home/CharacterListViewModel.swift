@@ -19,7 +19,7 @@ protocol CharacterListViewModelProtocol {
 }
 
 @MainActor
-final class CharacterListViewModel: ObservableObject, CharacterListViewModelProtocol {
+final class CharacterListViewModel: ObservableObject, @preconcurrency CharacterListViewModelProtocol {
   
     
     enum State { case idle, loading, loaded([CharacterDTO]), failed(String) }
@@ -128,6 +128,8 @@ private extension CharacterStatus {
         case .alive: self = .alive
         case .dead: self = .dead
         case .unknown: self = .unknown
+        @unknown default:
+            fatalError()
         }
     }
 }
@@ -138,6 +140,8 @@ private extension CharacterGender {
         case .female: self = .female
         case .genderless: self = .genderless
         case .unknown: self = .unknown
+        @unknown default:
+            fatalError()
         }
     }
 }
