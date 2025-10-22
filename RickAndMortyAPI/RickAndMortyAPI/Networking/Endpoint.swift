@@ -24,7 +24,10 @@ public struct RequestBuilder {
     public let baseURL: URL
     public let defaultHeaders: [String: String]
 
-    public init(baseURL: URL, defaultHeaders: [String: String] = ["Accept":"application/json"]) {
+    public init(baseURL: URL, defaultHeaders: [String: String] = [
+        "Accept": "application/json",
+        "User-Agent": "RickAndMortyApp/1.0"
+    ]) {
         self.baseURL = baseURL
         self.defaultHeaders = defaultHeaders
     }
@@ -42,8 +45,9 @@ public struct RequestBuilder {
 
         var req = URLRequest(url: url)
         req.httpMethod = endpoint.method.rawValue
-        defaultHeaders.forEach { req.setValue($1, forHTTPHeaderField: $0) }
         req.cachePolicy = .returnCacheDataElseLoad
+        req.timeoutInterval = 30
+        defaultHeaders.forEach { req.setValue($1, forHTTPHeaderField: $0) }
         return req
     }
 }

@@ -11,11 +11,14 @@ import RickAndMortyAPI
 
 protocol CharacterListViewModelProtocol {
     var state: CharacterListViewModel.State { get }
+    var filter: CharacterFilter { get }
     
     func loadFirstPage()
     func loadNextPageIfAvailable()
-    func extractNextPage(from info: CharactersPage.Info?) -> Int?
+    func extractNextPage(from info: Page<CharacterDTO>.Info?) -> Int?
     func searchCharacters(name: String?)
+    func updateFilter(_ newFilter: CharacterFilter)
+    func resetFilters()
 }
 
 @MainActor
@@ -25,12 +28,14 @@ final class CharacterListViewModel: ObservableObject, @preconcurrency CharacterL
     enum State { case idle, loading, loaded([CharacterDTO]), failed(String) }
 
     @Published private(set) var state: State = .idle
+    @Published var filter: CharacterFilter = CharacterFilter()
 
     private let api: RickAndMortyAPIProtocol
-    private var lastInfo: CharactersPage.Info?
+    private var lastInfo: Page<CharacterDTO>.Info?
     private var isLoading = false
     private var currentQueryName: String?
-        private var searchTask: Task<Void, Never>?
+    private var searchTask: Task<Void, Never>?
+    
     init(api: RickAndMortyAPIProtocol) {
         self.api = api
     }
@@ -39,10 +44,16 @@ final class CharacterListViewModel: ObservableObject, @preconcurrency CharacterL
         guard !isLoading else { return }
         isLoading = true
         state = .loading
+        currentQueryName = nil
         Task {
             defer { isLoading = false }
             do {
-                let page1 = try await api.listCharacters(page: 1, name: nil, status: nil, gender: nil)
+                let page1 = try await api.listCharacters(
+                    page: 1,
+                    name: nil,
+                    status: filter.status,
+                    gender: filter.gender
+                )
                 lastInfo = page1.info
                 state = .loaded(page1.results)
             } catch {
@@ -57,7 +68,12 @@ final class CharacterListViewModel: ObservableObject, @preconcurrency CharacterL
         Task {
             defer { isLoading = false }
             do {
-                let next = try await api.listCharacters(page: nextPage, name: nil, status: nil, gender: nil)
+                let next = try await api.listCharacters(
+                    page: nextPage,
+                    name: currentQueryName,
+                    status: filter.status,
+                    gender: filter.gender
+                )
                 lastInfo = next.info
                 if case .loaded(let old) = state {
                     state = .loaded(old + next.results)
@@ -70,7 +86,7 @@ final class CharacterListViewModel: ObservableObject, @preconcurrency CharacterL
         }
     }
 
-     func extractNextPage(from info: CharactersPage.Info?) -> Int? {
+    func extractNextPage(from info: Page<CharacterDTO>.Info?) -> Int? {
         guard let next = info?.next,
               let comps = URLComponents(string: next),
               let val = comps.queryItems?.first(where: { $0.name == "page" })?.value,
@@ -79,31 +95,44 @@ final class CharacterListViewModel: ObservableObject, @preconcurrency CharacterL
     }
     
     func searchCharacters(name: String?) {
-            searchTask?.cancel()
+        searchTask?.cancel()
 
-            let query = name?.trimmingCharacters(in: .whitespacesAndNewlines)
-            let normalized: String? = (query?.isEmpty == false) ? query : nil
-            currentQueryName = normalized
+        let query = name?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let normalized: String? = (query?.isEmpty == false) ? query : nil
+        currentQueryName = normalized
 
-            isLoading = true
-            state = .loading
+        isLoading = true
+        state = .loading
 
-            searchTask = Task { [weak self] in
-                guard let self else { return }
-                defer { self.isLoading = false }
-                do {
-                    let page1 = try await self.api.listCharacters(page: 1,
-                                                                  name: self.currentQueryName,
-                                                                  status: nil,
-                                                                  gender: nil)
-                    self.lastInfo = page1.info
-                    self.state = .loaded(page1.results)
-                } catch is CancellationError {
-                } catch {
-                    self.state = .failed(error.localizedDescription)
-                }
+        searchTask = Task { [weak self] in
+            guard let self else { return }
+            defer { self.isLoading = false }
+            do {
+                try await Task.sleep(nanoseconds: 150_000_000)
+                let page1 = try await self.api.listCharacters(
+                    page: 1,
+                    name: self.currentQueryName,
+                    status: self.filter.status,
+                    gender: self.filter.gender
+                )
+                self.lastInfo = page1.info
+                self.state = .loaded(page1.results)
+            } catch is CancellationError {
+            } catch {
+                self.state = .failed(error.localizedDescription)
             }
         }
+    }
+    
+    func updateFilter(_ newFilter: CharacterFilter) {
+        filter = newFilter
+        loadFirstPage()
+    }
+    
+    func resetFilters() {
+        filter.reset()
+        loadFirstPage()
+    }
 }
 
 
@@ -116,7 +145,9 @@ extension CharacterDTO {
             gender: .init(dto: gender),
             species: species,
             imageURL: URL(string: image),
-            locationName: location.name
+            locationName: location.name,
+            originName: origin.name,
+            episodeCount: episode.count
         )
     }
 }

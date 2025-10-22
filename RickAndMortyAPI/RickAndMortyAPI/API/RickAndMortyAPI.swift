@@ -7,12 +7,18 @@
 
 import Foundation
 
-public protocol RickAndMortyAPIProtocol {
-    func listCharacters(page: Int?, name: String?, status: Status?, gender: Gender?) async throws -> CharactersPage
+public protocol RickAndMortyAPIProtocol{
+    func listCharacters(page: Int?, name: String?, status: Status?, gender: Gender?) async throws -> Page<CharacterDTO>
     func getCharacter(id: Int) async throws -> CharacterDTO
+    func getLocation(id: Int) async throws -> LocationDTO
+    func getEpisode(id: Int) async throws -> EpisodesDTO
 }
 
+
 public final class RickAndMortyAPIClient: RickAndMortyAPIProtocol {
+    
+  
+    
     private let builder: RequestBuilder
     private let http: HTTPClientProtocol
     private let decoder: JSONDecoder
@@ -26,13 +32,26 @@ public final class RickAndMortyAPIClient: RickAndMortyAPIProtocol {
         self.http = http
         self.decoder = decoder
     }
+    
+    public func getLocation(id: Int) async throws -> LocationDTO {
+           let request = try builder.makeGET(path: "location/\(id)")
+        let (data, response) = try await http.send(request)
+           try Self.validate(response)
+           return try decoder.decode(LocationDTO.self, from: data)
+       }
 
-    public func listCharacters(
-        page: Int? = nil,
-        name: String? = nil,
-        status: Status? = nil,
-        gender: Gender? = nil
-    ) async throws -> CharactersPage {
+       public func getEpisode(id: Int) async throws -> EpisodesDTO {
+           let request = try builder.makeGET(path: "episode/\(id)")
+           let (data, response) = try await http.send(request)
+           try Self.validate(response)
+           return try decoder.decode(EpisodesDTO.self, from: data)
+       }
+    private static func validate(_ response: URLResponse) throws {
+        guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
+            throw APIError.invalidStatusCode((response as? HTTPURLResponse)?.statusCode ?? -1)
+        }
+    }
+    public func listCharacters(page: Int?, name: String?, status: Status?, gender: Gender?) async throws -> Page<CharacterDTO>  {
 
         var items: [URLQueryItem] = []
         if let page { items.append(.init(name: "page", value: String(page))) }
@@ -49,7 +68,7 @@ public final class RickAndMortyAPIClient: RickAndMortyAPIProtocol {
         }
 
         do {
-            return try decoder.decode(CharactersPage.self, from: data)
+            return try decoder.decode(Page.self, from: data)
         } catch {
             throw APIError.decoding(error)
         }
@@ -77,16 +96,49 @@ public protocol HTTPClientProtocol {
 
 extension URLSession: HTTPClientProtocol {
     public func send(_ request: URLRequest) async throws -> (Data, HTTPURLResponse) {
-        do {
-            let (data, resp) = try await data(for: request)
-            guard let http = resp as? HTTPURLResponse else {
-                throw APIError.badStatus(-1, data)
+        var lastError: Error?
+        
+        for attempt in 0..<3 {
+            do {
+                let (data, resp) = try await data(for: request)
+                guard let http = resp as? HTTPURLResponse else {
+                    throw APIError.badStatus(-1, data)
+                }
+                
+                if http.statusCode == 403 || http.statusCode == 429 {
+                    if attempt < 2 {
+                        let delay = UInt64(pow(2.0, Double(attempt)) * 1_000_000_000)
+                        try await Task.sleep(nanoseconds: delay)
+                        continue
+                    }
+                }
+                
+                return (data, http)
+            } catch is CancellationError {
+                throw URLError(.cancelled)
+            } catch {
+                lastError = error
+                if attempt < 2 {
+                    let delay = UInt64(pow(2.0, Double(attempt)) * 500_000_000)
+                    try? await Task.sleep(nanoseconds: delay)
+                    continue
+                }
             }
-            return (data, http)
-        } catch is CancellationError {
-            throw URLError(.cancelled)
-        } catch {
-            throw error
         }
+        
+        throw lastError ?? URLError(.unknown)
+    }
+}
+extension RequestBuilder {
+    func makeGET(path: String, query: [URLQueryItem] = []) throws -> URLRequest {
+        var comps = URLComponents(url: baseURL.appendingPathComponent(path), resolvingAgainstBaseURL: false)!
+        comps.queryItems = query.isEmpty ? nil : query
+        guard let url = comps.url else { throw URLError(.badURL) }
+        var req = URLRequest(url: url)
+        req.httpMethod = "GET"
+        req.cachePolicy = .returnCacheDataElseLoad
+        req.timeoutInterval = 30
+        defaultHeaders.forEach { req.setValue($1, forHTTPHeaderField: $0) }
+        return req
     }
 }

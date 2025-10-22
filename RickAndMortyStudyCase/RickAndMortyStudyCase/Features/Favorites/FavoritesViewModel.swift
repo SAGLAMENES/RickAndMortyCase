@@ -56,7 +56,9 @@ extension CharacterLocal {
             gender: CharacterGender.from(label: gender),
             species: species,
             imageURL: URL(string: imageURL),
-            locationName: locationName
+            locationName: locationName,
+            originName: "Unknown",
+            episodeCount: 0
         )
     }
 }

@@ -121,11 +121,67 @@ public struct StatusChip: View {
         } icon: {
             Image(systemName: icon).imageScale(.small)
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 6)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
         .background(tint.opacity(0.14), in: Capsule())
         .foregroundStyle(tint)
         .accessibilityLabel(Text("Status: \(title)"))
+    }
+}
+
+public struct FilterChip: View {
+    public let title: String
+    public let isSelected: Bool
+    public let action: () -> Void
+    
+    public init(title: String, isSelected: Bool, action: @escaping () -> Void) {
+        self.title = title
+        self.isSelected = isSelected
+        self.action = action
+    }
+    
+    public var body: some View {
+        Button(action: action) {
+            Text(title)
+                .font(DS.Typography.meta)
+                .fontWeight(.medium)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(
+                    isSelected ? RMColor.semantic.tint : DS.Surface.chip,
+                    in: Capsule()
+                )
+                .foregroundStyle(isSelected ? .black : RMColor.semantic.textPrimary)
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+public struct FilterTag: View {
+    public let title: String
+    public let onRemove: () -> Void
+    
+    public init(title: String, onRemove: @escaping () -> Void) {
+        self.title = title
+        self.onRemove = onRemove
+    }
+    
+    public var body: some View {
+        HStack(spacing: 4) {
+            Text(title)
+                .font(DS.Typography.meta)
+                .fontWeight(.medium)
+            
+            Button(action: onRemove) {
+                Image(systemName: "xmark.circle.fill")
+                    .imageScale(.small)
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .background(RMColor.semantic.tint.opacity(0.2), in: Capsule())
+        .foregroundStyle(RMColor.semantic.tint)
     }
 }
 
@@ -174,7 +230,7 @@ public struct FavoriteButton: View {
         Button(action: action) {
             Image(systemName: isOn ? "heart.fill" : "heart")
                 .imageScale(.medium)
-                .padding(8)
+                .padding(6)
                 .background(.ultraThinMaterial, in: Circle())
         }
         .buttonStyle(.plain)
@@ -214,19 +270,19 @@ public struct CharacterCardView: View {
     }
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: DS.Spacing.md) {
+        VStack(alignment: .leading, spacing: DS.Spacing.sm) {
             ZStack(alignment: .topTrailing) {
-                AsyncRemoteImage(url: model.imageURL, height: 200)
+                AsyncRemoteImage(url: model.imageURL, height: 180)
                 HStack {
                     StatusChip(title: model.statusLabel, icon: model.statusIcon, tint: model.statusTint)
-                        .padding(8)
+                        .padding(6)
                     Spacer(minLength: 0)
                     FavoriteButton(isOn: model.isFavorite, action: onToggleFavorite)
-                        .padding(8)
+                        .padding(6)
                 }
             }
 
-            VStack(alignment: .leading, spacing: DS.Spacing.xs) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(model.name)
                     .font(DS.Typography.title)
                     .lineLimit(1)
@@ -234,16 +290,16 @@ public struct CharacterCardView: View {
                     .font(DS.Typography.body)
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
-                HStack(spacing: 6) {
+                HStack(spacing: 4) {
                     Image(systemName: "mappin.and.ellipse").imageScale(.small)
                     Text(model.location).font(DS.Typography.meta).foregroundStyle(.secondary)
                 }.lineLimit(1)
             }
-            .padding(.horizontal, DS.Spacing.md)
-            .padding(.bottom, DS.Spacing.md)
+            .padding(.horizontal, DS.Spacing.sm)
+            .padding(.bottom, DS.Spacing.sm)
         }
-        .background(DS.Surface.card, in: RoundedRectangle(cornerRadius: DS.Radius.lg))
-        .contentShape(RoundedRectangle(cornerRadius: DS.Radius.lg))
+        .background(DS.Surface.card, in: RoundedRectangle(cornerRadius: DS.Radius.md))
+        .contentShape(RoundedRectangle(cornerRadius: DS.Radius.md))
         .cardShadow()
         .onTapGesture(perform: onTap)
         .accessibilityElement(children: .combine)

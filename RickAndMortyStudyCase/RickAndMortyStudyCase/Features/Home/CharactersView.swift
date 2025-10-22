@@ -1,9 +1,16 @@
 import SwiftUI
 import RickAndMortyAPI
+import RickAndMortyPersistence
 
 struct CharactersView: View {
     @StateObject private var vm = CharacterListViewModel(api: RickAndMortyAPIClient())
     @State private var searchText = ""
+    @State private var selectedCharacter: Character?
+    @State private var showFilterSheet = false
+    @State private var tempFilter = CharacterFilter()
+    @State private var favorites: Set<Int> = []
+    
+    private let localStorage = DefaultCharacterLocalDataSource()
 
     var body: some View {
         NavigationStack {
@@ -17,122 +24,218 @@ struct CharactersView: View {
                 .onSubmit(of: .search) {
                     vm.searchCharacters(name: searchText)
                 }
+                .navigationDestination(item: $selectedCharacter) { character in
+                    CharacterDetailView(character: character)
+                }
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button(action: { 
+                            tempFilter = vm.filter
+                            showFilterSheet = true 
+                        }) {
+                            Image(systemName: "slider.horizontal.3")
+                                .foregroundStyle(vm.filter.isActive ? RMColor.semantic.tint : RMColor.semantic.textSecondary)
+                        }
+                    }
+                }
+                .sheet(isPresented: $showFilterSheet) {
+                    CharacterFilterView(
+                        filter: $tempFilter,
+                        onApply: {
+                            vm.updateFilter(tempFilter)
+                        },
+                        onReset: {
+                            vm.resetFilters()
+                        }
+                    )
+                }
         }
         .tint(RMColor.semantic.tint)
-        .toolbarBackground(RMColor.semantic.background, for: .navigationBar)
-        .toolbarBackground(.visible, for: .navigationBar)
         .task {
             if case .idle = vm.state { vm.loadFirstPage() }
+            loadFavorites()
         }
-        .background(RMColor.semantic.background)
+    }
+    
+    private func loadFavorites() {
+        do {
+            let allFavorites = try localStorage.fetchFavorites()
+            favorites = Set(allFavorites.map { Int($0.id) })
+        } catch {
+            print("Error loading favorites: \(error)")
+        }
+    }
+    
+    private func toggleFavorite(for character: CharacterDTO) {
+        let id = Int64(character.id)
+        do {
+            if try localStorage.isFavorite(id: id) {
+                try localStorage.removeFavorite(id: id)
+                favorites.remove(character.id)
+            } else {
+                try localStorage.addFavorite(character.toDomain().asLocal)
+                favorites.insert(character.id)
+            }
+        } catch {
+            print("Error toggling favorite: \(error)")
+        }
     }
 
     @ViewBuilder
     private var content: some View {
         switch vm.state {
         case .idle, .loading:
-            ProgressView("Yükleniyor…")
-                .progressViewStyle(.circular)
-                .tint(RMColor.semantic.accent)
-                .foregroundStyle(RMColor.semantic.textSecondary)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(RMColor.semantic.background)
+            ZStack {
+                RMColor.semantic.background.ignoresSafeArea()
+                ProgressView()
+                    .tint(RMColor.semantic.accent)
+                    .scaleEffect(1.2)
+            }
 
         case .failed(let msg):
-            VStack(spacing: 12) {
-                Text("Hata: \(msg)")
-                    .multilineTextAlignment(.center)
-                    .foregroundStyle(RMColor.semantic.textPrimary)
-
-                Button("Tekrar Dene") { vm.loadFirstPage() }
+            ZStack {
+                RMColor.semantic.background.ignoresSafeArea()
+                VStack(spacing: DS.Spacing.lg) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .font(.system(size: 48))
+                        .foregroundStyle(RMColor.semantic.accent)
+                    
+                    Text(msg)
+                        .font(DS.Typography.body)
+                        .multilineTextAlignment(.center)
+                        .foregroundStyle(RMColor.semantic.textPrimary)
+                        .lineLimit(nil)
+                    
+                    Button("Tekrar Dene") {
+                        vm.loadFirstPage()
+                    }
                     .buttonStyle(.borderedProminent)
                     .tint(RMColor.semantic.tint)
+                }
+                .padding(DS.Spacing.xl)
             }
-            .padding()
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(RMColor.semantic.background)
 
         case .loaded(let items):
-            characterList(items)
+            characterGrid(items)
         }
     }
 
-    private func characterList(_ items: [CharacterDTO]) -> some View {
-        List {
-            ForEach(Array(items.enumerated()), id: \.element.id) { index, ch in
-                NavigationLink {
-                    CharacterDetailView(character: ch.toDomain())
-                } label: {
-                    CharacterRowCard(ch: ch)
+    private func characterGrid(_ items: [CharacterDTO]) -> some View {
+        ScrollView {
+            LazyVStack(spacing: 0) {
+                if vm.filter.isActive {
+                    activeFiltersBar
                 }
-                .listRowBackground(RMColor.semantic.surface)
-                .onAppear {
-                    if index >= items.count - 5 {
-                        vm.loadNextPageIfAvailable()
+                CharacterGrid(
+                    items: items,
+                    minItemWidth: 160,
+                    spacing: DS.Spacing.lg,
+                    maxColumns: 2
+                ) { dto in
+                    CharacterCardView(
+                        model: dto.toUI(isFavorite: favorites.contains(dto.id)),
+                        onTap: {
+                            selectedCharacter = dto.toDomain()
+                        },
+                        onToggleFavorite: {
+                            toggleFavorite(for: dto)
+                        }
+                    )
+                    .onAppear {
+                        if let index = items.firstIndex(where: { $0.id == dto.id }),
+                           index >= items.count - 5 {
+                            vm.loadNextPageIfAvailable()
+                        }
                     }
                 }
+                .padding(DS.Spacing.lg)
             }
         }
-        .listStyle(.plain)
-        .scrollContentBackground(.hidden)
-        .background(RMColor.semantic.background)
+        .background(RMColor.semantic.background.ignoresSafeArea())
+    }
+    
+    private var activeFiltersBar: some View {
+        VStack(alignment: .leading, spacing: DS.Spacing.sm) {
+            Text("Active Filters")
+                .font(DS.Typography.meta)
+                .foregroundStyle(RMColor.semantic.textSecondary)
+                .padding(.horizontal, DS.Spacing.lg)
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: DS.Spacing.sm) {
+                    if let status = vm.filter.status {
+                        FilterTag(title: status.displayName, onRemove: {
+                            var newFilter = vm.filter
+                            newFilter.status = nil
+                            vm.updateFilter(newFilter)
+                        })
+                    }
+                    if let gender = vm.filter.gender {
+                        FilterTag(title: gender.displayName, onRemove: {
+                            var newFilter = vm.filter
+                            newFilter.gender = nil
+                            vm.updateFilter(newFilter)
+                        })
+                    }
+                }
+                .padding(.horizontal, DS.Spacing.lg)
+            }
+        }
+        .padding(.vertical, DS.Spacing.md)
+        .background(DS.Surface.card)
     }
 }
 
-private struct CharacterRowCard: View {
-    let ch: CharacterDTO
-
-    var body: some View {
-        HStack(spacing: 12) {
-            avatar
-            VStack(alignment: .leading, spacing: 2) {
-                Text(ch.name)
-                    .bodyStyle()
-                    .foregroundStyle(RMColor.semantic.textPrimary)
-                Text("\(ch.status.rawValue) • \(ch.gender.rawValue)")
-                    .captionStyle()
-                    .foregroundStyle(RMColor.semantic.textSecondary)
-            }
-            Spacer()
-        }
-        .padding(10)
-        .background(RMColor.semantic.surface)
-        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .stroke(Color.white.opacity(0.08), lineWidth: 1)
+private extension CharacterDTO {
+    func toUI(isFavorite: Bool = false) -> CharacterUI {
+        CharacterUI(
+            id: id,
+            name: name,
+            imageURL: URL(string: image),
+            statusLabel: status.label,
+            statusIcon: status.icon,
+            statusTint: status.tint,
+            species: species,
+            gender: gender.label,
+            location: location.name,
+            isFavorite: isFavorite
         )
     }
+}
 
-    @ViewBuilder
-    private var avatar: some View {
-        if let url = URL(string: ch.image) {
-            AsyncImage(url: url) { phase in
-                switch phase {
-                case .empty:
-                    ZStack {
-                        RMColor.semantic.surface
-                        ProgressView().tint(RMColor.semantic.accent)
-                    }
-                case .success(let img):
-                    img.resizable().scaledToFit()
-                        .frame(width: 75,height: 125)
-                    
-                case .failure:
-                    Image(systemName: "photo")
-                        .imageScale(.large)
-                        .foregroundStyle(RMColor.semantic.textSecondary)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                @unknown default:
-                    Color.gray.opacity(0.2)
-                }
-            }
-            .frame(width: 56, height: 56)
-            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(Color.white.opacity(0.08), lineWidth: 1)
-            )
+private extension Status {
+    var label: String {
+        switch self {
+        case .alive: return "Alive"
+        case .dead: return "Dead"
+        case .unknown: return "Unknown"
+        }
+    }
+    
+    var icon: String {
+        switch self {
+        case .alive: return "heart.fill"
+        case .dead: return "xmark.octagon.fill"
+        case .unknown: return "questionmark.circle.fill"
+        }
+    }
+    
+    var tint: Color {
+        switch self {
+        case .alive: return .green
+        case .dead: return .red
+        case .unknown: return .gray
+        }
+    }
+}
+
+private extension Gender {
+    var label: String {
+        switch self {
+        case .male: return "Male"
+        case .female: return "Female"
+        case .genderless: return "Genderless"
+        case .unknown: return "Unknown"
         }
     }
 }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct CharactersPage: Decodable {
+public struct Page<Item:Decodable>: Decodable {
     public struct Info: Decodable {
             public let count: Int
             public let pages: Int
@@ -15,7 +15,7 @@ public struct CharactersPage: Decodable {
             public let prev: String?
     }
     public let info: Info
-    public let results: [CharacterDTO]
+    public let results: [Item]
 }
 
 public struct CharacterDTO: Decodable, Identifiable {
@@ -50,3 +50,27 @@ public enum Gender: String, Decodable {
     case genderless = "Genderless"
     case unknown = "unknown"
 }
+
+
+public struct LocationDTO: Decodable {
+    public let id: Int
+    public let name: String
+    public let type: String
+    public let dimension: String
+    public let residents: [URL]
+    public let url: URL
+    public let created: String
+}
+
+typealias LocationsPage = Page<LocationDTO>
+
+public struct EpisodesDTO: Decodable {
+    public let id: Int
+    public let name: String
+    public let type: String
+    public let dimension: String
+    public let residents: [URL]
+    public let url: URL
+    public let created: String
+}
+typealias EpisodesPage = Page<LocationDTO>
