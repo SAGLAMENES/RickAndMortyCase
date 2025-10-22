@@ -16,7 +16,7 @@ public enum APIError: Error, LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .invalidURL: return "Invalid URL"
-        case .badStatus(let code, _): return "Bad status code: \(code)"
+        case .badStatus(let code, _): return "Bad stat us code: \(code)"
         case .decoding(let err): return "Decoding failed: \(err.localizedDescription)"
         case .invalidStatusCode(let code): return "Invalid status code: \(code)"
         }
